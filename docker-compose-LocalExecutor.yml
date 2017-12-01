@@ -2,21 +2,25 @@ version: '2'
 services:
     postgres:
         image: postgres:9.6
+        volumes:
+            - /home/ekene/postgres-data:/var/lib/postgresql/data        
         environment:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
 
     webserver:
-        image: puckel/docker-airflow:1.8.2
+        image: local/docker-airflow:latest
         restart: always
         depends_on:
             - postgres
         environment:
             - LOAD_EX=n
             - EXECUTOR=Local
+            - FERNET_KEY=BBUbFmuL-iok4_D4B0OSNqJlcD3IoJm50B8-ypjDJjU=
         volumes:
-            - ./dags:/usr/local/airflow/dags
+            - ~/Sources/BI Workflows/airflow.dags:/usr/local/airflow/dags
+            - ~/google-cloud:/usr/local/airflow/keys
         ports:
             - "8080:8080"
         command: webserver
